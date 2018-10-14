@@ -16,6 +16,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MainScreenAdapter extends RecyclerView.Adapter<MainScreenAdapter.RecipeViewHolder> {
 
@@ -47,6 +48,27 @@ public class MainScreenAdapter extends RecyclerView.Adapter<MainScreenAdapter.Re
         if(selectedRecipe.getImage() != null && !selectedRecipe.getImage().isEmpty()) {
             //This is in hypothetical context
             Picasso.get().load(selectedRecipe.getImage()).into(recipeViewHolder.mRecipeImage);
+        }else{
+
+            int randomNumber = getRandomInteger(4,1);
+
+            switch(randomNumber) {
+                case 1 :
+                    recipeViewHolder.mRecipeImage.setImageResource(R.drawable.food_image_1);
+                    break;
+                case 2 :
+                    recipeViewHolder.mRecipeImage.setImageResource(R.drawable.food_image_2);
+                    break;
+                case 3 :
+                    recipeViewHolder.mRecipeImage.setImageResource(R.drawable.food_image_3);
+                    break;
+                case 4 :
+                    recipeViewHolder.mRecipeImage.setImageResource(R.drawable.food_image_4);
+                    break;
+                default :
+                    recipeViewHolder.mRecipeImage.setImageResource(R.drawable.food_image_1);
+            }
+
         }
 
         recipeViewHolder.mRecipeName.setText(selectedRecipe.getName());
@@ -56,6 +78,11 @@ public class MainScreenAdapter extends RecyclerView.Adapter<MainScreenAdapter.Re
     public int getItemCount() {
         if (null == mRecipeList) return 0;
         return mRecipeList.size();
+    }
+
+
+    private int getRandomInteger(int maximum, int minimum){
+        return ((int) (Math.random()*(maximum - minimum))) + minimum;
     }
 
     public  class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

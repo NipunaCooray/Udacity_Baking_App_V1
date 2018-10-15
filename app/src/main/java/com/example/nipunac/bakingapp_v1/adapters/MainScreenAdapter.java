@@ -22,7 +22,7 @@ public class MainScreenAdapter extends RecyclerView.Adapter<MainScreenAdapter.Re
 
     private List<Recipe> mRecipeList;
 
-    public void setRecipes(List recipeList) {
+    public void setRecipes(List <Recipe> recipeList) {
         mRecipeList = recipeList;
         notifyDataSetChanged();
     }
@@ -50,24 +50,6 @@ public class MainScreenAdapter extends RecyclerView.Adapter<MainScreenAdapter.Re
             Picasso.get().load(selectedRecipe.getImage()).into(recipeViewHolder.mRecipeImage);
         }else{
 
-            int randomNumber = getRandomInteger(4,1);
-
-            switch(randomNumber) {
-                case 1 :
-                    recipeViewHolder.mRecipeImage.setImageResource(R.drawable.food_image_1);
-                    break;
-                case 2 :
-                    recipeViewHolder.mRecipeImage.setImageResource(R.drawable.food_image_2);
-                    break;
-                case 3 :
-                    recipeViewHolder.mRecipeImage.setImageResource(R.drawable.food_image_3);
-                    break;
-                case 4 :
-                    recipeViewHolder.mRecipeImage.setImageResource(R.drawable.food_image_4);
-                    break;
-                default :
-                    recipeViewHolder.mRecipeImage.setImageResource(R.drawable.food_image_1);
-            }
 
         }
 
@@ -81,9 +63,6 @@ public class MainScreenAdapter extends RecyclerView.Adapter<MainScreenAdapter.Re
     }
 
 
-    private int getRandomInteger(int maximum, int minimum){
-        return ((int) (Math.random()*(maximum - minimum))) + minimum;
-    }
 
     public  class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 

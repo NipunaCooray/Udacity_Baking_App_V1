@@ -1,6 +1,8 @@
 package com.example.nipunac.bakingapp_v1;
 
 
+import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,7 +20,7 @@ import java.util.List;
 
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements OnRequestFinishedListener {
+public class MainActivity extends AppCompatActivity implements OnRequestFinishedListener, MainScreenAdapter.RecepiItemOnClickHandler{
 
     private final static String TAG = "MainActivity";
     ArrayList<Recipe> mRecipes;
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements OnRequestFinished
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        mMainScreenAdapter = new MainScreenAdapter();
+        mMainScreenAdapter = new MainScreenAdapter(this);
         mRecyclerView.setAdapter(mMainScreenAdapter);
 
         NetworkUtils.getRecipiesFromURL(this);
@@ -54,6 +56,23 @@ public class MainActivity extends AppCompatActivity implements OnRequestFinished
         mRecipes = (ArrayList<Recipe>) response.body();
         mMainScreenAdapter.setRecipes(mRecipes);
 
+
+    }
+
+    @Override
+    public void onClick(Recipe selectedRecipe) {
+        Toast.makeText(this,"Clicked"+selectedRecipe.getName(),Toast.LENGTH_SHORT).show();
+
+        Intent RecipeDetailsActivityIntent = new Intent(MainActivity.this, RecipeDetailsActivity.class);
+        Bundle bundle=new Bundle();
+        bundle.putString("recipe_name",selectedRecipe.getName());
+        bundle.putParcelableArrayList("ingredients", (ArrayList<? extends Parcelable>) selectedRecipe.getIngredients());
+        bundle.putParcelableArrayList("steps", (ArrayList<? extends Parcelable>) selectedRecipe.getSteps());
+
+
+        RecipeDetailsActivityIntent.putExtra("selected_recipe",bundle);
+
+        startActivity(RecipeDetailsActivityIntent);
 
     }
 }

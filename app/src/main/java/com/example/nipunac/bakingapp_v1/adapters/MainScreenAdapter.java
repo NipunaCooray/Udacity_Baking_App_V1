@@ -22,6 +22,19 @@ public class MainScreenAdapter extends RecyclerView.Adapter<MainScreenAdapter.Re
 
     private List<Recipe> mRecipeList;
 
+    private final RecepiItemOnClickHandler mClickHandler;
+
+    /**
+     * The interface that receives onClick messages.
+     */
+    public interface RecepiItemOnClickHandler {
+        void onClick(Recipe selectedMovie);
+    }
+
+    public MainScreenAdapter(RecepiItemOnClickHandler clickHandler) {
+        mClickHandler = clickHandler;
+    }
+
     public void setRecipes(List <Recipe> recipeList) {
         mRecipeList = recipeList;
         notifyDataSetChanged();
@@ -81,7 +94,9 @@ public class MainScreenAdapter extends RecyclerView.Adapter<MainScreenAdapter.Re
 
         @Override
         public void onClick(View view) {
-
+            int adapterPosition = getAdapterPosition();
+            Recipe currentRecipe = mRecipeList.get(adapterPosition);
+            mClickHandler.onClick(currentRecipe);
         }
     }
 

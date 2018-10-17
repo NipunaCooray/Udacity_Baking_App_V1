@@ -1,20 +1,22 @@
 package com.example.nipunac.bakingapp_v1;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.nipunac.bakingapp_v1.model.Ingredient;
 import com.example.nipunac.bakingapp_v1.model.Step;
 
 import java.util.ArrayList;
 
-public class RecipeDetailsActivity extends AppCompatActivity {
+public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDetailsFragment.OnStepClickListener {
 
-    private ArrayList<Step> steps;
-    private ArrayList<Ingredient> ingredients;
+    private ArrayList<Step> mSteps;
+    private ArrayList<Ingredient> mIngredients;
 
 
-    String name;
+    String mName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +24,24 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recipe_details);
 
         Bundle selected_recipe = getIntent().getBundleExtra("selected_recipe");
-        name = selected_recipe.getString("recipe_name");
-        getSupportActionBar().setTitle(name);
-        ingredients = selected_recipe.getParcelableArrayList("ingredients");
-        steps = selected_recipe.getParcelableArrayList("steps");
+        mName = selected_recipe.getString("recipe_name");
+        getSupportActionBar().setTitle(mName);
+        mIngredients = selected_recipe.getParcelableArrayList("ingredients");
+        mSteps = selected_recipe.getParcelableArrayList("steps");
 
+
+        RecipeDetailsFragment recipeDetailsFragment = new RecipeDetailsFragment();
+        recipeDetailsFragment.setArguments(selected_recipe);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .add(R.id.recipe_details_fragment_container,recipeDetailsFragment)
+                .commit();
+
+    }
+
+    @Override
+    public void onStepClicked(int position) {
+        Toast.makeText(this,"Clicked "+position,Toast.LENGTH_SHORT).show();
     }
 }

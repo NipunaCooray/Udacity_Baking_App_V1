@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements OnRequestFinished
 
     @Override
     public void onClick(Recipe selectedRecipe) {
-        Toast.makeText(this,"Clicked"+selectedRecipe.getName(),Toast.LENGTH_SHORT).show();
+
 
         Intent RecipeDetailsActivityIntent = new Intent(MainActivity.this, RecipeDetailsActivity.class);
         Bundle bundle=new Bundle();

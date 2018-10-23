@@ -1,5 +1,7 @@
 package com.example.nipunac.bakingapp_v1;
 
+import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,6 +44,15 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
 
     @Override
     public void onStepClicked(int position) {
-        Toast.makeText(this,"Clicked "+position,Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"Clicked "+position,Toast.LENGTH_SHORT).show();
+
+        Intent StepDetailsActivityIntent = new Intent(RecipeDetailsActivity.this, StepDetailActivity.class);
+        Bundle bundle=new Bundle();
+        bundle.putString("step_description",mSteps.get(position).getShortDescription());
+        bundle.putParcelable("step",mSteps.get(position));
+
+        StepDetailsActivityIntent.putExtra("selected_step",bundle);
+
+        startActivity(StepDetailsActivityIntent);
     }
 }

@@ -16,11 +16,11 @@
             android:layout_height="0dp"
             android:layout_weight="1">
             <TextView
-                android:id="@+id/empty"
+                android:id="@+id/empty_message"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="There is no attached image or video"
+                android:text="@string/no_media"
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:padding="16dp"
@@ -31,12 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-            <ImageView
-                android:id="@+id/image"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/no_video"/>
+
 
         </FrameLayout>
 

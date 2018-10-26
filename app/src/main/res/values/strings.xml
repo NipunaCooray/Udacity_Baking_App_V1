@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">BakingApp_V1</string>
+
+    <!--fragment_step_detail-->
+    <string name="no_media">No media found</string>
+
 </resources>

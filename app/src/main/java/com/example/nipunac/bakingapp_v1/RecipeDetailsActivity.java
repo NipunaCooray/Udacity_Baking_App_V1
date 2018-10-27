@@ -17,6 +17,7 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
     private ArrayList<Step> mSteps;
     private ArrayList<Ingredient> mIngredients;
 
+    boolean isTablet;
 
     String mName;
 
@@ -32,13 +33,43 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
         mSteps = selected_recipe.getParcelableArrayList("steps");
 
 
-        RecipeDetailsFragment recipeDetailsFragment = new RecipeDetailsFragment();
-        recipeDetailsFragment.setArguments(selected_recipe);
+        if(findViewById(R.id.master_detail_view) != null){
+            isTablet = true;
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .add(R.id.recipe_details_fragment_container,recipeDetailsFragment)
-                .commit();
+            if(savedInstanceState == null){
+
+                RecipeDetailsFragment recipeDetailsFragment = new RecipeDetailsFragment();
+                recipeDetailsFragment.setArguments(selected_recipe);
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("step",mSteps.get(0));
+
+                StepDetailFragment stepDetailsFragment = new StepDetailFragment();
+                stepDetailsFragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .add(R.id.recipe_details_fragment_container,recipeDetailsFragment)
+                        .add(R.id.step_details_fragment_container,stepDetailsFragment)
+                        .commit();
+
+            }
+
+
+        }else{
+            isTablet = false;
+
+            if(savedInstanceState == null){
+                RecipeDetailsFragment recipeDetailsFragment = new RecipeDetailsFragment();
+                recipeDetailsFragment.setArguments(selected_recipe);
+
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .add(R.id.recipe_details_fragment_container,recipeDetailsFragment)
+                        .commit();
+            }
+
+        }
 
     }
 
@@ -46,13 +77,38 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
     public void onStepClicked(int position) {
         //Toast.makeText(this,"Clicked "+position,Toast.LENGTH_SHORT).show();
 
-        Intent StepDetailsActivityIntent = new Intent(RecipeDetailsActivity.this, StepDetailActivity.class);
-        Bundle bundle=new Bundle();
-        bundle.putString("step_description",mSteps.get(position).getShortDescription());
-        bundle.putParcelable("step",mSteps.get(position));
+        if(isTablet){
 
-        StepDetailsActivityIntent.putExtra("selected_step",bundle);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("step",mSteps.get(position));
 
-        startActivity(StepDetailsActivityIntent);
+            StepDetailFragment stepDetailsFragment = new StepDetailFragment();
+            stepDetailsFragment.setArguments(bundle);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.step_details_fragment_container,stepDetailsFragment)
+                    .commit();
+
+
+        }else{
+            Intent StepDetailsActivityIntent = new Intent(RecipeDetailsActivity.this, StepDetailActivity.class);
+            Bundle bundle=new Bundle();
+            bundle.putString("step_description",mSteps.get(position).getShortDescription());
+            bundle.putParcelable("step",mSteps.get(position));
+
+            StepDetailsActivityIntent.putExtra("selected_step",bundle);
+
+            startActivity(StepDetailsActivityIntent);
+        }
+
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+
     }
 }

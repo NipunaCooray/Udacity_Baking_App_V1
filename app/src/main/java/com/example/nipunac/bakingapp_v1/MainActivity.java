@@ -14,6 +14,7 @@ import com.example.nipunac.bakingapp_v1.adapters.MainScreenAdapter;
 import com.example.nipunac.bakingapp_v1.model.Recipe;
 import com.example.nipunac.bakingapp_v1.network.NetworkUtils;
 import com.example.nipunac.bakingapp_v1.network.OnRequestFinishedListener;
+import com.example.nipunac.bakingapp_v1.widget.WidgetUpdateService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements OnRequestFinished
         mRecyclerView.setAdapter(mMainScreenAdapter);
 
         NetworkUtils.getRecipiesFromURL(this);
+
+        Log.d(TAG, ""+WidgetUpdateService.class);
     }
 
 

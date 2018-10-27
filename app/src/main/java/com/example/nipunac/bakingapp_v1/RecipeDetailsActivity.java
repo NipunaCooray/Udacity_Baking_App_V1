@@ -1,14 +1,19 @@
 package com.example.nipunac.bakingapp_v1;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.example.nipunac.bakingapp_v1.model.Ingredient;
 import com.example.nipunac.bakingapp_v1.model.Step;
+import com.example.nipunac.bakingapp_v1.widget.RecipeListWidget;
+import com.example.nipunac.bakingapp_v1.widget.WidgetUpdateService;
 
 import java.util.ArrayList;
 
@@ -25,6 +30,7 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_details);
+        //getActionBar().setDisplayHomeAsUpEnabled(true);
 
         Bundle selected_recipe = getIntent().getBundleExtra("selected_recipe");
         mName = selected_recipe.getString("recipe_name");
@@ -32,6 +38,7 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
         mIngredients = selected_recipe.getParcelableArrayList("ingredients");
         mSteps = selected_recipe.getParcelableArrayList("steps");
 
+        updateWidgetService();
 
         if(findViewById(R.id.master_detail_view) != null){
             isTablet = true;
@@ -111,4 +118,18 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
 
 
     }
+
+    void updateWidgetService()
+    {
+        Intent i = new Intent(this, WidgetUpdateService.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("ingredients", mIngredients);
+        i.putExtra("bundle", bundle);
+        i.setAction(WidgetUpdateService.WIDGET_UPDATE_ACTION);
+        startService(i);
+
+
+    }
+
+
 }

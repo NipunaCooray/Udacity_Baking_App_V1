@@ -1,18 +1,13 @@
 package com.example.nipunac.bakingapp_v1;
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
+
 import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.widget.Toast;
-
 import com.example.nipunac.bakingapp_v1.model.Ingredient;
 import com.example.nipunac.bakingapp_v1.model.Step;
-import com.example.nipunac.bakingapp_v1.widget.RecipeListWidget;
 import com.example.nipunac.bakingapp_v1.widget.WidgetUpdateService;
 
 import java.util.ArrayList;
@@ -22,7 +17,7 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
     private ArrayList<Step> mSteps;
     private ArrayList<Ingredient> mIngredients;
 
-    boolean isTablet;
+    public static boolean isTablet;
 
     String mName;
 
@@ -49,7 +44,8 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
                 recipeDetailsFragment.setArguments(selected_recipe);
 
                 Bundle bundle = new Bundle();
-                bundle.putParcelable("step",mSteps.get(0));
+                bundle.putParcelableArrayList("steps",  mSteps);
+                //bundle.putBoolean("is_tablet",isTablet);
 
                 StepDetailFragment stepDetailsFragment = new StepDetailFragment();
                 stepDetailsFragment.setArguments(bundle);
@@ -87,7 +83,9 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
         if(isTablet){
 
             Bundle bundle = new Bundle();
-            bundle.putParcelable("step",mSteps.get(position));
+            bundle.putParcelableArrayList("steps",mSteps);
+            bundle.putInt("clicked_position",position);
+
 
             StepDetailFragment stepDetailsFragment = new StepDetailFragment();
             stepDetailsFragment.setArguments(bundle);
@@ -101,8 +99,9 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
         }else{
             Intent StepDetailsActivityIntent = new Intent(RecipeDetailsActivity.this, StepDetailActivity.class);
             Bundle bundle=new Bundle();
-            bundle.putString("step_description",mSteps.get(position).getShortDescription());
-            bundle.putParcelable("step",mSteps.get(position));
+            bundle.putParcelableArrayList("steps",mSteps);
+            bundle.putInt("clicked_position",position);
+            bundle.putString("recipe_name",mName);
 
             StepDetailsActivityIntent.putExtra("selected_step",bundle);
 

@@ -6,10 +6,14 @@ import android.os.Bundle;
 
 import com.example.nipunac.bakingapp_v1.model.Step;
 
+import java.util.ArrayList;
+
 public class StepDetailActivity extends AppCompatActivity {
 
-    String mStepDescription;
-    Step mStep;
+    int mClickedPosition;
+    private ArrayList<Step> mSteps;
+
+    String mName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,9 +21,16 @@ public class StepDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_step_detail);
 
         Bundle selected_step_bundle = getIntent().getBundleExtra("selected_step");
-        mStepDescription = selected_step_bundle.getString("step_description");
-        getSupportActionBar().setTitle(mStepDescription);
-        mStep = selected_step_bundle.getParcelable("step");
+
+
+        mSteps = selected_step_bundle.getParcelableArrayList("steps");
+
+        mClickedPosition = selected_step_bundle.getInt("clicked_position");
+
+        mName = selected_step_bundle.getString("recipe_name");
+
+        getSupportActionBar().setTitle(mName);
+
 
         StepDetailFragment stepDetailsFragment = new StepDetailFragment();
         stepDetailsFragment.setArguments(selected_step_bundle);

@@ -1,18 +1,23 @@
 package com.example.nipunac.bakingapp_v1;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.nipunac.bakingapp_v1.model.Step;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -29,9 +34,11 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
-public class StepDetailFragment extends Fragment {
+import java.util.ArrayList;
 
-    private Step mStep;
+public class StepDetailFragment extends Fragment implements View.OnClickListener {
+
+    private ArrayList<Step> mSteps;
 
     PlayerView playerView;
 
@@ -47,6 +54,20 @@ public class StepDetailFragment extends Fragment {
 
     TextView emptyMessage;
 
+    Button previousStep;
+
+    Button nextStep;
+
+    int currentIndex;
+
+    boolean isTablet = false;
+
+    private static final String TAG = "StepDetailFragment";
+
+    FrameLayout descriptionFrame;
+
+    LinearLayout buttonFrame;
+
     public StepDetailFragment(){}
 
     @Nullable
@@ -55,30 +76,40 @@ public class StepDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_step_detail,container,false);
 
         Bundle extra = getArguments();
-        mStep = extra.getParcelable("step");
+        mSteps = extra.getParcelableArrayList("steps");
+        currentIndex = extra.getInt("clicked_position");
 
-        mStepDescription = rootView.findViewById(R.id.step_description);
-        mStepDescription.setText(mStep.getDescription());
+        isTablet = RecipeDetailsActivity.isTablet;
 
         playerView = rootView.findViewById(R.id.playerView);
         emptyMessage = rootView.findViewById(R.id.empty_message);
 
-        setupViews();
+        previousStep = rootView.findViewById(R.id.previous_btn);
+        nextStep = rootView.findViewById(R.id.next_btn);
+
+        descriptionFrame = rootView.findViewById(R.id.description_view);
+        buttonFrame = rootView.findViewById(R.id.button_frame);
+        descriptionFrame.setVisibility(View.VISIBLE);
+        mStepDescription = rootView.findViewById(R.id.step_description);
+
+        previousStep.setOnClickListener(this);
+        nextStep.setOnClickListener(this);
+
+        if(! isTablet && isLandscape() ){
+            descriptionFrame.setVisibility(View.GONE);
+        }
+
+        if(isTablet){
+            buttonFrame.setVisibility(View.GONE);
+        }
 
         return rootView;
     }
 
-    private void setupViews(){
-        if(mStep.getVideoURL().isEmpty()  && mStep.getThumbnailURL().isEmpty() ){
-            playerView.setVisibility(View.GONE);
-            emptyMessage.setVisibility(View.VISIBLE);
-        }
-
-    }
 
 
     public void initializePlayer() {
-        if (mPlayer == null && (! mStep.getVideoURL().isEmpty() || ! mStep.getThumbnailURL().isEmpty() ) ){
+        if (mPlayer == null ){
 
             mPlayer = ExoPlayerFactory.newSimpleInstance(
                     new DefaultRenderersFactory(getActivity()),
@@ -87,19 +118,29 @@ public class StepDetailFragment extends Fragment {
             mPlayer.setPlayWhenReady(playWhenReady);
             mPlayer.seekTo(currentWindow, playbackPosition);
 
+        }
+
+        if(mSteps.get(currentIndex).getVideoURL().isEmpty()  && mSteps.get(currentIndex).getThumbnailURL().isEmpty() ){
+            playerView.setVisibility(View.GONE);
+            emptyMessage.setVisibility(View.VISIBLE);
+        }else{
+
+            playerView.setVisibility(View.VISIBLE);
+            emptyMessage.setVisibility(View.GONE);
+
             String videoUrl;
 
-            if(! mStep.getVideoURL().isEmpty()){
-                videoUrl = mStep.getVideoURL();
+            if(! mSteps.get(currentIndex).getVideoURL().isEmpty()){
+                videoUrl = mSteps.get(currentIndex).getVideoURL();
             }else{
-                videoUrl = mStep.getThumbnailURL();
+                videoUrl = mSteps.get(currentIndex).getThumbnailURL();
             }
 
             MediaSource mediaSource = buildMediaSource(Uri.parse(videoUrl));
             mPlayer.prepare(mediaSource, true, false);
-
-
         }
+
+        mStepDescription.setText(mSteps.get(currentIndex).getDescription());
     }
 
     private MediaSource buildMediaSource(Uri uri) {
@@ -119,22 +160,12 @@ public class StepDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //hideSystemUi();
         if ((Util.SDK_INT <= 23 || mPlayer == null)) {
             initializePlayer();
         }
     }
 
-    @SuppressLint("InlinedApi")
-    private void hideSystemUi() {
-        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 
-    }
 
     @Override
     public void onStop() {
@@ -160,6 +191,33 @@ public class StepDetailFragment extends Fragment {
             mPlayer = null;
         }
     }
+
+    private boolean isLandscape()
+    {
+        int orientation = getActivity().getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE)
+            return true;
+        return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.previous_btn) {
+            if(currentIndex ==0)
+                return;
+            currentIndex--;
+
+            initializePlayer();
+        } else if (id == R.id.next_btn) {
+            if (currentIndex == mSteps.size() - 1)
+                return;
+            currentIndex++;
+
+            initializePlayer();
+        }
+    }
+
 
 
 

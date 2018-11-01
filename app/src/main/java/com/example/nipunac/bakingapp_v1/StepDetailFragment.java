@@ -75,11 +75,21 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_step_detail,container,false);
 
-        Bundle extra = getArguments();
-        mSteps = extra.getParcelableArrayList("steps");
-        currentIndex = extra.getInt("clicked_position");
+        if(savedInstanceState == null){
 
-        isTablet = RecipeDetailsActivity.isTablet;
+            Bundle extra = getArguments();
+            mSteps = extra.getParcelableArrayList("steps");
+            currentIndex = extra.getInt("clicked_position");
+
+            isTablet = RecipeDetailsActivity.isTablet;
+
+
+
+        }else{
+            mSteps = savedInstanceState.getParcelableArrayList("steps");
+            currentIndex = savedInstanceState.getInt("index");
+            isTablet = savedInstanceState.getBoolean("tablet");
+        }
 
         playerView = rootView.findViewById(R.id.playerView);
         emptyMessage = rootView.findViewById(R.id.empty_message);
@@ -103,6 +113,7 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
             buttonFrame.setVisibility(View.GONE);
         }
 
+
         return rootView;
     }
 
@@ -116,7 +127,7 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
                     new DefaultTrackSelector(), new DefaultLoadControl());
             playerView.setPlayer(mPlayer);
             mPlayer.setPlayWhenReady(playWhenReady);
-            mPlayer.seekTo(currentWindow, playbackPosition);
+            //mPlayer.seekTo(currentWindow, playbackPosition);
 
         }
 
@@ -141,7 +152,10 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
         }
 
         mStepDescription.setText(mSteps.get(currentIndex).getDescription());
+
     }
+
+
 
     private MediaSource buildMediaSource(Uri uri) {
         return new ExtractorMediaSource.Factory(
@@ -183,10 +197,17 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+    }
+
     private void releasePlayer() {
         if (mPlayer != null) {
-            playbackPosition = mPlayer.getCurrentPosition();
-            playWhenReady = mPlayer.getPlayWhenReady();
+//            playbackPosition = mPlayer.getCurrentPosition();
+//            playWhenReady = mPlayer.getPlayWhenReady();
+            mPlayer.stop();
             mPlayer.release();
             mPlayer = null;
         }
@@ -207,19 +228,34 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
             if(currentIndex ==0)
                 return;
             currentIndex--;
+            replaceFragment();
 
-            initializePlayer();
         } else if (id == R.id.next_btn) {
             if (currentIndex == mSteps.size() - 1)
                 return;
             currentIndex++;
-
-            initializePlayer();
+            replaceFragment();
         }
+
+
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("index",currentIndex);
+        outState.putParcelableArrayList("steps",mSteps);
+        outState.putBoolean("tablet",isTablet);
+    }
 
+    void replaceFragment()
+    {
 
-
-
+        StepDetailFragment stepDetailFragment = new StepDetailFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("clicked_position", currentIndex);
+        bundle.putParcelableArrayList("steps",mSteps);
+        stepDetailFragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.step_details_fragment_container, stepDetailFragment).commit();
+    }
 }

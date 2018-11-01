@@ -20,25 +20,29 @@ public class StepDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_detail);
 
-        Bundle selected_step_bundle = getIntent().getBundleExtra("selected_step");
+        if(savedInstanceState == null){
+            Bundle selected_step_bundle = getIntent().getBundleExtra("selected_step");
 
 
-        mSteps = selected_step_bundle.getParcelableArrayList("steps");
+            mSteps = selected_step_bundle.getParcelableArrayList("steps");
 
-        mClickedPosition = selected_step_bundle.getInt("clicked_position");
+            mClickedPosition = selected_step_bundle.getInt("clicked_position");
 
-        mName = selected_step_bundle.getString("recipe_name");
+            mName = selected_step_bundle.getString("recipe_name");
 
-        getSupportActionBar().setTitle(mName);
+            getSupportActionBar().setTitle(mName);
 
 
-        StepDetailFragment stepDetailsFragment = new StepDetailFragment();
-        stepDetailsFragment.setArguments(selected_step_bundle);
+            StepDetailFragment stepDetailsFragment = new StepDetailFragment();
+            stepDetailsFragment.setArguments(selected_step_bundle);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .add(R.id.step_details_fragment_container,stepDetailsFragment)
-                .commit();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .add(R.id.step_details_fragment_container,stepDetailsFragment)
+                    .commit();
+        }
+
+
 
 
     }

@@ -51,7 +51,7 @@
                 android:freezesText="true"
                 android:gravity="center_horizontal"
                 android:padding="16dp"
-                android:textSize="30sp"/>
+                android:textSize="20sp"/>
 
         </FrameLayout>
 

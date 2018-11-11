@@ -18,7 +18,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 
 @RunWith(AndroidJUnit4.class)
-public class MainActivityInstrumentedTest {
+public class BakingAppActivityInstrumentedTest {
 
     private IdlingResource mIdlingResource;
 
@@ -28,7 +28,6 @@ public class MainActivityInstrumentedTest {
     public void registerIdlingResource()
     {
         mIdlingResource = mActivityTestRule.getActivity().getIdlingResource();
-        // To prove that the test fails, omit this call:
         IdlingRegistry.getInstance().register(mIdlingResource);
     }
 
@@ -36,6 +35,13 @@ public class MainActivityInstrumentedTest {
     public void mainActivityBasicTest()
     {
         onView(withId(R.id.RecipeRecyclerView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+    }
+
+    @Test
+    public void RecipeDetailsActivityBasicTest()
+    {
+        mainActivityBasicTest();
+        onView(withId(R.id.recipe_steps_recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
     }
 
     @After

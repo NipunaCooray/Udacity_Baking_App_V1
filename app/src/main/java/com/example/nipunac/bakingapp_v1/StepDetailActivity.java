@@ -14,6 +14,11 @@ public class StepDetailActivity extends AppCompatActivity {
     private ArrayList<Step> mSteps;
 
     String mName;
+    private static String STEP_FRAGMENT="StepDetailFragment";
+
+    StepDetailFragment mStepDetailsFragment;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +38,18 @@ public class StepDetailActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(mName);
 
 
-            StepDetailFragment stepDetailsFragment = new StepDetailFragment();
-            stepDetailsFragment.setArguments(selected_step_bundle);
+            mStepDetailsFragment = new StepDetailFragment();
+            mStepDetailsFragment.setArguments(selected_step_bundle);
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .add(R.id.step_details_fragment_container,stepDetailsFragment)
+                    .add(R.id.step_details_fragment_container,mStepDetailsFragment,STEP_FRAGMENT)
                     .commit();
         }
+
+
+
+
 
 
 
